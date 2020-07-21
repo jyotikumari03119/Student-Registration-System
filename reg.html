@@ -1,0 +1,190 @@
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.io.*;
+import java.sql.*;
+
+class reg extends JFrame implements ActionListener
+{
+Connection conn;
+PreparedStatement pst;
+
+String str="";
+JFrame fr;
+Label l1, l2, l3, l4, l5, l6, l7;
+JLabel lpic, logo, h, head;
+TextField t1, t2, t3;
+TextArea ta;
+JComboBox cb;
+Button b1, b2, b3, b4, b5;
+Panel p;
+Timer t;
+int count=0;
+
+reg()
+{
+fr=new JFrame();
+fr.setContentPane(new JLabel(new ImageIcon("Login.jpg")));
+fr.setBounds(0,0,2000,2000);
+
+h=new JLabel("<html><body><center><font color=red size=6><u>Student Registration Portal</u></font></center></body></html>");
+h.setBounds(525,10,700,50);
++fr.add(h);
+
+logo=new JLabel();
+logo.setBounds(20,20,500,200);
+logo.setIcon(new ImageIcon("Logo.png"));
++fr.add(logo);
+
+head=new JLabel();
+head.setBounds(425,70,800,150);
+head.setIcon(new ImageIcon("Stu_Reg.jpg"));
+fr.add(head);
+
+lpic=new JLabel();
+lpic.setBounds(850,300,120,150);
+lpic.setBorder(BorderFactory.createTitledBorder(""));
+fr.add(lpic);
+
+p=new Panel();
+p.setBounds(375,300,300,200);
+p.setLayout(new GridLayout(8,2));
+fr.add(p);
+
+l1=new Label("Name");
+l2=new Label("Address");
+l3=new Label("Course");
+l4=new Label("Email");
+l5=new Label("Mobile");
+l6=new Label("Registration No");
+l7=new Label();
+
+t1=new TextField();
+t2=new TextField();
+t3=new TextField();
+ta=new TextArea();
+
+cb=new JComboBox();
+cb.addItem("SELECT COURSE");
+cb.addItem("JAVA");
+cb.addItem("C");
+cb.addItem(".NET");
+cb.addItem("ORACLE");
+cb.addItem("PHP");
+cb.addItem("ANDROID");
+cb.addItem("C++");
+
+b1=new Button("Save");
+b2=new Button("Reset");
+b3=new Button("Back");
+b4=new Button("Exit");
+b5=new Button("Upload Pic");
+b5.setBounds(860,470,100,30);
+
+p.add(l1);
+p.add(t1);
+p.add(l2);
+p.add(ta);
+p.add(l3);
+p.add(cb);
+p.add(l4);
+p.add(t2);
+p.add(l5);
+p.add(t3);
+p.add(l6);
+p.add(l7);
+p.add(b1);
+p.add(b2);
+p.add(b3);
+p.add(b4);
+fr.add(b5);
+
+b1.addActionListener(this);
+b2.addActionListener(this);
+b3.addActionListener(this);
+b4.addActionListener(this);
+b5.addActionListener(this);
+
+try
+{
+Class.forName("oracle.jdbc.driver.OracleDriver");
+conn=DriverManager.getConnection("jdbc:Oracle:thin:@localhost:1521:Xe","system","a");
+pst=conn.prepareStatement("select * from info");
+ResultSet rs=pst.executeQuery();
+while(rs.next())
+{
+count++;
+}
+pst.close();
+l7.setText("12MCRBS6200"+String.valueOf(count+1));
+}
+catch(Exception k9)
+{
+JOptionPane.showMessageDialog(null,"Failed="+k9);
+}
+fr.setLayout(null);
+fr.setVisible(true);
+
+}
+
+public void actionPerformed(ActionEvent k)
+{
+if(k.getSource()==b1)
+{
+try
+{
+pst=conn.prepareStatement("insert into info values(?,?,?,?,?,?,?)");
+pst.setString(1,t1.getText());
+pst.setString(2,ta.getText());
+pst.setString(3,String.valueOf(cb.getSelectedItem()));
+pst.setString(4,t2.getText());
+pst.setString(5,t3.getText());
+pst.setString(6,l7.getText());
+pst.setString(7,str);
+pst.executeUpdate();
+JOptionPane.showMessageDialog(null,"You Are Now Registered to Login!");
+conn.close();
+pst.close();
+}
+catch(Exception e)
+{	
+JOptionPane.showMessageDialog(null,"Failed="+e);
+}
+
+}
+
+if(k.getSource()==b2)
+{
+t1.setText("");
+t2.setText("");
+t3.setText("");
+ta.setText("");
+}
+
+if(k.getSource()==b3)
+{
+fr.dispose();
+new home();
+}
+
+if(k.getSource()==b4)
+{
+fr.dispose();
+}
+
+if(k.getSource()==b5)
+{
+JFileChooser obj=new JFileChooser();
+obj.showOpenDialog(this);
+File f=obj.getSelectedFile();
+str=f.getPath();
+lpic.setIcon(new ImageIcon(str));
+}
+
+}
+
+public static void main(String djd[])
+{
+new reg();
+}
+}
